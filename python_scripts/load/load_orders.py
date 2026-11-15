@@ -1,9 +1,18 @@
-import psycopg
+import psycopg2
 from config.settings import DB_CONFIG
 
 
 def load_orders(df):
-    with psycopg.connect(**DB_CONFIG) as conn:
+    # We explicitly map the DB_CONFIG keys to what psycopg2 expects
+    conn_params = {
+        "host": DB_CONFIG["host"],
+        "port": DB_CONFIG["port"],
+        "dbname": DB_CONFIG["dbname"],
+        "user": DB_CONFIG["user"],
+        "password": DB_CONFIG["password"],
+    }
+
+    with psycopg2.connect(**conn_params) as conn:
         with conn.cursor() as cur:
             # Create table if it doesn't exist
             cur.execute("""
@@ -42,5 +51,6 @@ def load_orders(df):
                 """,
                     row,
                 )
+        # psycopg2 commits automatically when exiting the 'with' block
 
     print(f"Loaded {len(df)} records into PostgreSQL.")

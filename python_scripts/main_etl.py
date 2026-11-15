@@ -14,7 +14,7 @@ def run_pipeline():
     logger.info("========== PIPELINE STARTED ==========")
     try:
         # 1. Extract
-        raw_df = extract_orders("data/raw/sales.csv")
+        raw_df = extract_orders("data/raw/orders.csv")
         # 2. Transform
         clean_df = transform_orders(raw_df)
 

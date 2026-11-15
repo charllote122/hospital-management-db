@@ -2,3 +2,39 @@
 2026-11-15 14:20:29,038 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
 2026-11-15 14:23:06,527 - INFO - __main__ - ========== PIPELINE STARTED ==========
 2026-11-15 14:23:06,853 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-16 01:28:07,840 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-16 01:30:18,014 - ERROR - __main__ - ========== PIPELINE FAILED ==========
+Traceback (most recent call last):
+  File "C:\dev\hospital-management-db\python_scripts\main_etl.py", line 25, in run_pipeline
+    load_orders(clean_df)
+  File "C:\dev\hospital-management-db\python_scripts\load\load_orders.py", line 6, in load_orders
+    with psycopg.connect(**DB_CONFIG) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\dev\hospital-management-db\python_scripts\venv\Lib\site-packages\psycopg\connection.py", line 126, in connect
+    raise last_ex.with_traceback(None)
+psycopg.errors.ConnectionTimeout: connection timeout expired
+2026-11-16 01:32:46,856 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-16 01:34:56,941 - ERROR - __main__ - ========== PIPELINE FAILED ==========
+Traceback (most recent call last):
+  File "C:\dev\hospital-management-db\python_scripts\main_etl.py", line 25, in run_pipeline
+    load_orders(clean_df)
+  File "C:\dev\hospital-management-db\python_scripts\load\load_orders.py", line 6, in load_orders
+    with psycopg.connect(**DB_CONFIG) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\dev\hospital-management-db\python_scripts\venv\Lib\site-packages\psycopg\connection.py", line 126, in connect
+    raise last_ex.with_traceback(None)
+psycopg.errors.ConnectionTimeout: connection timeout expired
+2026-11-16 01:37:16,509 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-16 01:37:17,100 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:06:36,469 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:06:38,982 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:06:55,540 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:06:56,219 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:07:10,239 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:07:10,459 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:07:35,840 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:07:35,971 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:07:45,004 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:07:45,132 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
+2026-11-15 23:07:53,081 - INFO - __main__ - ========== PIPELINE STARTED ==========
+2026-11-15 23:07:53,283 - INFO - __main__ - ========== PIPELINE COMPLETED ==========
