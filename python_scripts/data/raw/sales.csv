@@ -1,0 +1,6 @@
+order_id,customer_id,order_date,product,quantity,unit_price,status
+2001,201,2026-11-10,Printer,1,45000,completed
+2002,202,2026-11-10,Ink Cartridge,4,2500,completed
+2003,203,2026-11-11,Paper Ream,10,500,pending
+2004,201,2026-11-11,Printer,1,45000,completed
+2005,204,2026-11-12,Desk Chair,NULL,15000,completed

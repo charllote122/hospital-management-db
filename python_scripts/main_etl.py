@@ -1,22 +1,20 @@
 import logging
+from logger_config import setup_logging
 from extract.extract_csv import extract_orders
 from transform.transform_orders import transform_orders
 from validation.validate_orders import validate_orders
 from load.load_orders import load_orders
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+# Setup our advanced rotating logger
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def run_pipeline():
+    logger.info("========== PIPELINE STARTED ==========")
     try:
-        logging.info("Pipeline started")
-
         # 1. Extract
-        raw_df = extract_orders("data/raw/orders.csv")
-
+        raw_df = extract_orders("data/raw/sales.csv")
         # 2. Transform
         clean_df = transform_orders(raw_df)
 
@@ -26,10 +24,12 @@ def run_pipeline():
         # 4. Load
         load_orders(clean_df)
 
-        logging.info("Pipeline completed successfully!")
+        logger.info("========== PIPELINE COMPLETED ==========")
 
-    except Exception as e:
-        logging.error(f"Pipeline failed: {e}")
+    except Exception:
+        # This will capture the FULL traceback in the log file
+        logger.exception("========== PIPELINE FAILED ==========")
+        raise
 
 
 if __name__ == "__main__":
