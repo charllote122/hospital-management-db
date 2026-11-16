@@ -1,18 +1,54 @@
-# 🏥 Hospital Management System Database
+# 🏥 Hospital Management System — Full Data Engineering Platform
 
-A complete, production-ready PostgreSQL database architecture for a hospital management system, complete with a Python ETL ingestion pipeline.
-
-This project demonstrates advanced database design, data integrity constraints, performance optimization, and Python-to-PostgreSQL integration.
+A complete, production-grade Data Engineering portfolio project demonstrating the entire modern data stack: **Relational Database Design, ETL, Orchestration, Distributed Processing, Real-Time Streaming, Lakehouse, Data Warehousing, and Analytics Engineering.**
 
 ## 🚀 Features
-- **Relational Design:** 10+ normalized tables with strict Primary/Foreign Key constraints.
+
+### 1. Relational Database Design (PostgreSQL)
+- **10+ Normalized Tables** with strict Primary/Foreign Key constraints.
 - **Data Integrity:** Exclusion constraints to prevent doctors from being double-booked.
-- **Automation:** PL/pgSQL functions for financial calculations and triggers for automatic payment auditing and data cleaning.
-- **Transactions:** Concurrency control (row-level locking) to prevent deadlocks during financial transfers.
-- **Reporting:** Views and Materialized Views for real-time and cached analytical dashboards.
-- **Semi-Structured Data:** JSONB raw ingestion table with GIN indexing for API payloads.
-- **Performance:** B-Tree indexing and `EXPLAIN ANALYZE` optimization demonstrated on 100,000+ rows.
-- **Python ETL:** A Python script using `psycopg` to ingest JSON API payloads directly into PostgreSQL.
+- **ACID Transactions:** Row-level locking to prevent deadlocks during financial transfers.
+- **Triggers & Functions:** Automatic payment auditing and data cleaning.
+- **JSONB Ingestion:** GIN-indexed raw API payload storage.
+
+### 2. Performance Optimization (PostgreSQL)
+- **B-Tree Indexing:** Reduced query time from **28.9ms to 0.12ms** on 100,000+ rows (demonstrated with `EXPLAIN ANALYZE`).
+- **Materialized Views** for cached analytical dashboards.
+
+### 3. Python ETL Pipeline
+- Modular `extract`, `transform`, `validate`, `load` scripts.
+- Uses `psycopg2` / `psycopg` to ingest JSON API payloads.
+- Rotating file logging and Pytest unit tests.
+- Idempotent loading using `ON CONFLICT DO NOTHING`.
+
+### 4. Orchestration (Apache Airflow + Docker)
+- Dockerized Airflow running a DAG (`hospital_etl_pipeline`) with retries and error handling.
+- Automates the Python ETL pipeline end-to-end.
+
+### 5. Distributed Processing (PySpark)
+- **Medallion Architecture:** Bronze (raw), Silver (cleaned), Gold (aggregated) layers.
+- Reads CSV, enforces schemas, calculates revenue, and writes **Parquet** files.
+- Writes Gold data to PostgreSQL via **JDBC**.
+
+### 6. Real-Time Streaming (Apache Kafka)
+- Python **Producer** publishing appointment events.
+- Python **Consumer** reading events and writing to PostgreSQL in real-time.
+- Demonstrates topics, partitions, and offsets.
+
+### 7. Data Lakehouse (Delta Lake)
+- Creates **Delta Tables** on top of Parquet storage.
+- **ACID Transactions:** In-place updates without rewriting the entire table.
+- **Time Travel:** Query the table as it existed before an update.
+
+### 8. Data Warehousing (Dimensional Modelling)
+- **Star Schema:** Fact and Dimension tables in a dedicated `warehouse` schema.
+- **Date Dimension** generated with `GENERATE_SERIES`.
+- Analytical SQL queries (Revenue by Category, City, and Month).
+
+### 9. Analytics Engineering (dbt)
+- **dbt Project:** Modular SQL models for `dim_customer`, `fact_sales`, and `revenue_by_category`.
+- Connected to PostgreSQL with `profiles.yml`.
+- Builds views/tables inside the `dbt_warehouse` schema.
 
 ---
 
@@ -21,37 +57,79 @@ This project demonstrates advanced database design, data integrity constraints, 
 ```text
 hospital-management-db/
 │
-├── 01_create_tables.sql          # Creates all 8 core tables and foreign keys
-├── 02_insert_seed_data.sql       # Inserts sample hospitals, doctors, patients
-├── 03_constraints.sql            # Adds the exclusion constraint (No Double-Booking)
-├── 04_views.sql                  # Creates the appointment details view
-├── 05_reports.sql                # Creates doctor reports and revenue materialized views
+├── 01_create_tables.sql              # Core tables and foreign keys
+├── 02_insert_seed_data.sql           # Seed data
+├── 03_constraints.sql                # Exclusion constraint (No Double-Booking)
+├── 04_views.sql                      # Appointment details view
+├── 05_reports.sql                    # Doctor reports and revenue views
 ├── 06_transactions_and_functions.sql # Bank accounts and ACID transfer functions
-├── 07_testing_transactions.sql   # Scripts to test concurrency and rollbacks
-├── 08_functions_and_procedures.sql # Payment calculations and status updates
-├── 09_triggers_and_automation.sql  # Audit logs, name trimming, and deletion archiving
-├── 10_json_and_jsonb.sql         # JSONB ingestion tables and query techniques
-├── 11_query_optimization.sql     # 100k row generation and index performance testing
+├── 07_testing_transactions.sql       # Concurrency and rollback tests
+├── 08_functions_and_procedures.sql   # Payment calculations and status updates
+├── 09_triggers_and_automation.sql    # Audit logs, name trimming, deletion archiving
+├── 10_json_and_jsonb.sql             # JSONB ingestion and querying
+├── 11_query_optimization.sql         # 100k row generation and indexing
 │
-├── python_scripts/               # Python ETL Integration
-│   ├── ingest_patient.py         # Python script to push JSON to PostgreSQL
-│   ├── .env                      # (Ignored in Git) Database credentials
-│   └── .gitignore                # Prevents secrets from being pushed
+├── python_scripts/                   # Python ETL
+│   ├── main_etl.py
+│   ├── ingest_patient.py
+│   ├── config/settings.py
+│   ├── extract/extract_csv.py
+│   ├── transform/transform_orders.py
+│   ├── validation/validate_orders.py
+│   ├── load/load_orders.py
+│   ├── tests/test_transform.py
+│   └── .env                          # (Ignored in Git) DB credentials
 │
+├── dags/                             # Airflow DAGs
+│   └── hospital_etl_dag.py
+│
+├── spark_pipeline/                   # PySpark Medallion Architecture
+│   ├── src/
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   ├── extraction/read_data.py
+│   │   ├── transformation/cleaning.py
+│   │   ├── validation/quality_checks.py
+│   │   ├── loading/write_data.py
+│   │   └── lakehouse.py              # Delta Lake ACID + Time Travel
+│   ├── data/bronze/ silver/ gold/
+│   └── jars/postgresql-42.7.14.jar
+│
+├── kafka_pipeline/                   # Real-Time Streaming
+│   ├── docker-compose.yml
+│   ├── producers/order_producer.py
+│   ├── consumers/order_consumer.py
+│   └── spark_streaming.py
+│
+├── hospital_dbt/                     # dbt Analytics Engineering
+│   ├── models/
+│   │   ├── dim_customer.sql
+│   │   ├── fact_sales.sql
+│   │   └── revenue_by_category.sql
+│   └── dbt_project.yml
+│
+├── docker-compose.yaml               # Airflow
 └── README.md
 
 
-## Relationships:
-- **Departments** (1) ─── (N) **Doctors**
-- **Patients** (1) ─── (N) **Appointments**
-- **Doctors** (1) ─── (N) **Appointments**
-- **Appointments** (1) ─── (0..1) **Prescriptions**
-- **Prescriptions** (1) ─── (N) **Prescription_Items**
-- **Medicines** (1) ─── (N) **Prescription_Items**
-- **Appointments** (1) ─── (N) **Payments**
+🗄️ Database Schema & Relationships
+Departments (1) ─── (N) Doctors
 
-## Setup Instructions
-Run the files in this exact order to build the database:
+Patients (1) ─── (N) Appointments
+
+Doctors (1) ─── (N) Appointments
+
+Appointments (1) ─── (0..1) Prescriptions
+
+Prescriptions (1) ─── (N) Prescription_Items
+
+Medicines (1) ─── (N) Prescription_Items
+
+Appointments (1) ─── (N) Payments
+
+⚙️ Setup Instructions
+1. PostgreSQL Database
+Run the SQL files in order:
 \i 01_create_tables.sql
 \i 02_insert_seed_data.sql
 \i 03_constraints.sql
@@ -60,10 +138,39 @@ Run the files in this exact order to build the database:
 \i 08_functions_and_procedures.sql
 \i 09_triggers_and_automation.sql
 \i 10_json_and_jsonb.sql
+\i 11_query_optimization.sql
 
-## ER Diagram
+2. Python ETL
 
-```text
+cd python_scripts
+python -m venv venv
+source venv/Scripts/activate      # Windows Git Bash
+pip install -r requirements.txt
+python main_etl.py
+
+3. Airflow (Docker)
+
+docker compose up airflow-init
+docker compose up -d
+# Open http://localhost:8080 (admin/admin)
+
+4. PySpark
+python spark_pipeline/src/main.py
+
+5. Kafka
+cd kafka_pipeline
+docker compose up -d
+# Terminal 1: python consumers/order_consumer.py
+# Terminal 2: python producers/order_producer.py
+
+6. Delta Lake
+python spark_pipeline/src/lakehouse.py
+
+7. dbt
+cd hospital_dbt
+dbt run
+
+📊 ER Diagram
 ┌────────────────┐          ┌────────────────┐
 │  departments   │1        N│    doctors     │
 │────────────────│──────────│────────────────│
@@ -108,3 +215,14 @@ Run the files in this exact order to build the database:
                             │ amount, method, paid_at │
                             └──────────────┘
 
+
+🏆 Skills Demonstrated
+Category	Technologies
+Databases	PostgreSQL, SQL, Star Schema, Dimensional Modelling
+Programming	Python, Pandas, PySpark
+Orchestration	Apache Airflow, Docker
+Streaming	Apache Kafka
+Lakehouse	Delta Lake (ACID, Time Travel)
+Analytics Engineering	dbt
+Testing	Pytest
+Version Control	Git, GitHub
