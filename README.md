@@ -1,4 +1,4 @@
-# 🏥 Hospital Management System — Full Data Engineering Platform
+# 🏥 Hospital Management System
 
 A complete, production-grade Data Engineering portfolio project demonstrating the entire modern data stack: **Relational Database Design, ETL, Orchestration, Distributed Processing, Real-Time Streaming, Lakehouse, Data Warehousing, and Analytics Engineering.**
 
